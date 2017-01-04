@@ -48,6 +48,19 @@ app.post('/todos', function(req, res){
     //Shows user the response body
     res.json(body);
 });
+//DELETE /todos/:id
+//use _.without
+app.delete('/todos/:id', function(req, res){
+    var delId = parseInt(req.params.id);
+    var delItem = _.findWhere(todos, {id: delId});
+    if(!delItem){
+        res.status(404).send("Item not found");
+    } else{
+        todos = _.without(todos, delItem);
+        res.json(delItem);
+    }
+});
+
 
 app.listen(PORT, function(){
     console.log('Express listening on port ' + PORT + ".");
