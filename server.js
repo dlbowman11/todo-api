@@ -54,7 +54,7 @@ app.delete('/todos/:id', function(req, res){
     var delId = parseInt(req.params.id);
     var delItem = _.findWhere(todos, {id: delId});
     if(!delItem){
-        res.status(404).send("Item not found");
+        res.status(404).json({"Error" : "Item not found"});
     } else{
         todos = _.without(todos, delItem);
         res.json(delItem);
