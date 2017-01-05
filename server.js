@@ -61,6 +61,42 @@ app.delete('/todos/:id', function(req, res){
     }
 });
 
+//PUT /todos/:id
+app.put('/todos/:id', function(req, res){
+    var body = _.pick(req.body, 'description', 'completed');
+    var putId = parseInt(req.params.id);
+    var putItem = _.findWhere(todos, {id: putId});
+    var validAttributes = {};
+    console.log(putItem);
+    
+    if(!putItem){
+        return res.status(404).send();
+    }
+    if(body.hasOwnProperty('completed') && _.isBoolean(body.completed))
+        {
+            console.log("hit completed");
+            validAttributes.completed = body.completed;
+        }else if(body.hasOwnProperty('completed')){
+            console.log("Failed completed");
+            res.status(400).json({"Error" : "completed must be a boolean."})
+        }
+    if(body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length >0){
+        validAttributes.description = body.description;
+    }else if(body.hasOwnProperty('description')){
+        res.status(400).json({"Error" : "Description must be a string"});
+    }
+
+    console.log(validAttributes);
+    _.extend(putItem, validAttributes);
+    res.json(putItem);
+    
+    
+    
+    
+    
+    
+});
+
 
 app.listen(PORT, function(){
     console.log('Express listening on port ' + PORT + ".");
