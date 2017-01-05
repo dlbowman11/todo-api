@@ -14,7 +14,17 @@ app.get('/', function (req, res){
 
 //GET /todos
 app.get('/todos', function(req, res){
-   res.json(todos); 
+    var qParams = req.query;
+    var filteredTodos = todos;
+    if(qParams.hasOwnProperty('completed') && qParams.completed === 'true')
+    {
+        filteredTodos = _.where(filteredTodos, {completed: true});
+    }else if(qParams.hasOwnProperty('completed') && qParams.completed === 'false'){
+        filteredTodos = _.where(filteredTodos, {completed: false});
+    }
+    
+    res.json(filteredTodos);
+    
 });
 
 //GET /todos/:id
@@ -67,17 +77,14 @@ app.put('/todos/:id', function(req, res){
     var putId = parseInt(req.params.id);
     var putItem = _.findWhere(todos, {id: putId});
     var validAttributes = {};
-    console.log(putItem);
     
     if(!putItem){
         return res.status(404).send();
     }
     if(body.hasOwnProperty('completed') && _.isBoolean(body.completed))
         {
-            console.log("hit completed");
             validAttributes.completed = body.completed;
         }else if(body.hasOwnProperty('completed')){
-            console.log("Failed completed");
             res.status(400).json({"Error" : "completed must be a boolean."})
         }
     if(body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length >0){
@@ -86,15 +93,8 @@ app.put('/todos/:id', function(req, res){
         res.status(400).json({"Error" : "Description must be a string"});
     }
 
-    console.log(validAttributes);
     _.extend(putItem, validAttributes);
     res.json(putItem);
-    
-    
-    
-    
-    
-    
 });
 
 
