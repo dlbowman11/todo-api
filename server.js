@@ -14,6 +14,7 @@ app.get('/', function (req, res){
 
 //GET /todos
 app.get('/todos', function(req, res){
+    //Needed to filter on query
     var qParams = req.query;
     var filteredTodos = todos;
     if(qParams.hasOwnProperty('completed') && qParams.completed === 'true')
@@ -22,6 +23,20 @@ app.get('/todos', function(req, res){
     }else if(qParams.hasOwnProperty('completed') && qParams.completed === 'false'){
         filteredTodos = _.where(filteredTodos, {completed: false});
     }
+    //End filter on query
+    //Filter on description
+    if(qParams.hasOwnProperty('description') && qParams.description.trim().length > 0)
+    {
+        filteredTodos = _.filter(filteredTodos, function(str){
+            if(str.description.toLowerCase.indexOf(qParams.description.toLowerCase) > -1)
+                {
+                    return qParams.description;
+                }
+            // could replace if statement with
+            //return str.description.toLowerCase.indexOf(qParams.description.toLowerCase) > -1
+        });
+    }
+    //End filter on description
     
     res.json(filteredTodos);
     
